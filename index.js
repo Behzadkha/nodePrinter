@@ -25,7 +25,6 @@ app.post('/print', async (req, res) => {
     const ip = req.body.printerIp;
     const orders = req.body.orders;
     const orderType = orders[0].orderType;
-    console.log(ip, orderType)
     sendPrintRequest(ip, orders, orderType);
     return res.status(200).send();
   }
