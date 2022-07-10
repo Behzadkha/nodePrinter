@@ -5,7 +5,8 @@ const cors = require('cors')
 const port = 3000
 app.use(express.json())
 app.use(cors())
-
+const https = require("https");
+const fs = require("fs");
 
 const ThermalPrinter = require("node-thermal-printer").printer;
 const PrinterTypes = require("node-thermal-printer").types;
@@ -64,9 +65,23 @@ app.post('/connectPrinter', async (req, res) => {
   
 })
 
-app.listen(process.env.PORT || port, () => {
-  console.log(`Print server is listening on ${process.env.PORT || port}`)
-})
+https
+  .createServer(
+		// Provide the private and public key to the server by reading each
+		// file's content with the readFileSync() method.
+    {
+      key: fs.readFileSync("key.pem"),
+      cert: fs.readFileSync("cert.pem"),
+    },
+    app
+  )
+  .listen(3004, () => {
+    console.log("serever is runing at port 3004");
+  });
+
+// app.listen(process.env.PORT || port, () => {
+//   console.log(`Print server is listening on ${process.env.PORT || port}`)
+// })
 
 process.on('uncaughtException', (err) => {
   console.log(err)
