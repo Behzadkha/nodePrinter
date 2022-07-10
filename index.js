@@ -6,13 +6,8 @@ const sendPrintRequest = require('./print');
 const port = 3004
 app.use(express.json())
 app.use(cors())
-var fs = require('fs');
-var http = require('http');
-var https = require('https');
-var privateKey  = fs.readFileSync('./selfsigned.key', 'utf8');
-var certificate = fs.readFileSync('./selfsigned.crt', 'utf8');
-
-var credentials = {key: privateKey, cert: certificate};
+const https = require("https");
+const fs = require("fs");
 
 const ThermalPrinter = require("node-thermal-printer").printer;
 const PrinterTypes = require("node-thermal-printer").types;
@@ -41,8 +36,20 @@ app.post('/print', async (req, res) => {
 
 })
 
-var httpsServer = https.createServer(credentials, app);
-httpsServer.listen(3004);
+https
+  .createServer(
+		// Provide the private and public key to the server by reading each
+		// file's content with the readFileSync() method.
+    {
+      key: fs.readFileSync("key.pem"),
+      cert: fs.readFileSync("cert.pem"),
+    },
+    app
+  )
+  .listen(3004, () => {
+    console.log("serever is runing at port 3004");
+  });
+
 // app.listen(process.env.PORT || port, () => {
 //   console.log(`Print server is listening on ${process.env.PORT || port}`)
 // })
