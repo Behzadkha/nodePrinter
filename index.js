@@ -41,8 +41,8 @@ https
 		// Provide the private and public key to the server by reading each
 		// file's content with the readFileSync() method.
     {
-      key: fs.readFileSync("test.key"),
-      cert: fs.readFileSync("test.crt"),
+      key: fs.readFileSync("ca.key"),
+      cert: fs.readFileSync("ca.crt"),
     },
     app
   )
