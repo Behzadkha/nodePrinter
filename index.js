@@ -38,11 +38,11 @@ app.post('/print', async (req, res) => {
 
 https
   .createServer(
-		// Provide the private and public key to the server by reading each
-		// file's content with the readFileSync() method.
+    // Provide the private and public key to the server by reading each
+    // file's content with the readFileSync() method.
     {
-      key: fs.readFileSync("ca.key"),
-      cert: fs.readFileSync("ca.crt"),
+      key: fs.readFileSync("tls.key"),
+      cert: fs.readFileSync("tls.crt"),
     },
     app
   )
