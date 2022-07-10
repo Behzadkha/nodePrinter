@@ -21,6 +21,10 @@ Arguments:
   table
   items //ordered items - format:[{name: "", specialQuestions: [{question: "", answers: [{name: "", count: ""}]}]}]
 */
+
+app.get('/', (req, res) => {
+  return res.status(200).json({ msg: "hello" });
+})
 app.post('/print', async (req, res) => {
   try {
     const ip = req.body.printerIp;
