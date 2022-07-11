@@ -1,30 +1,27 @@
 const express = require('express');
-
+const config = require('./config');
 const app = express()
 const cors = require('cors');
 const sendPrintRequest = require('./print');
 const port = 3004
 app.use(express.json())
 app.use(cors())
-const https = require("https");
-const fs = require("fs");
 
-const ThermalPrinter = require("node-thermal-printer").printer;
-const PrinterTypes = require("node-thermal-printer").types;
+const { io } = require('socket.io-client');
 
-/*
-Arguments:
-  printerType //EPSON or STAR
-  printerIP
-  printerPORT
-  date
-  table
-  items //ordered items - format:[{name: "", specialQuestions: [{question: "", answers: [{name: "", count: ""}]}]}]
-*/
+const socket = io(config.SERVER, { query: { restName: config.restName } });
 
 app.get('/', (req, res) => {
-  return res.status(200).json({ msg: "hello" });
+  return res.status(200).json({ msg: "hello printer" });
 })
+
+socket.on('print', (data) => {
+  const ip = data.ip;
+  const orders = data.orders;
+  const orderType = orders[0].orderType;
+  sendPrintRequest(ip, orders, orderType);
+})
+
 app.post('/print', async (req, res) => {
   try {
     const ip = req.body.printerIp;
@@ -40,23 +37,10 @@ app.post('/print', async (req, res) => {
 
 })
 
-https
-  .createServer(
-    // Provide the private and public key to the server by reading each
-    // file's content with the readFileSync() method.
-    {
-      key: fs.readFileSync("tls.key"),
-      cert: fs.readFileSync("tls.crt"),
-    },
-    app
-  )
-  .listen(3004, () => {
-    console.log("serever is runing at port 3004");
-  });
 
-// app.listen(process.env.PORT || port, () => {
-//   console.log(`Print server is listening on ${process.env.PORT || port}`)
-// })
+app.listen(port, () => {
+  console.log("serever is runing at port 3004");
+});
 
 process.on('uncaughtException', (err) => {
   console.log(err)
