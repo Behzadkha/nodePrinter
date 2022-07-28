@@ -9,12 +9,7 @@ app.use(cors())
 
 const { io } = require('socket.io-client');
 
-const socket = io(config.SERVER, {
-  reconnection: true, 
-  reconnectionDelay: 1000, 
-  reconnectionDelayMax: 3000,
-  reconnectionAttempts: Number.MAX_VALUE,
-  query: { restName: config.restName } });
+const socket = io(config.SERVER, {query: { restName: config.restName } });
 
 app.get('/', (req, res) => {
   return res.status(200).json({ msg: "hello printer" });
